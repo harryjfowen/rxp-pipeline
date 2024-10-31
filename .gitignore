@@ -1,1 +1,3 @@
 rdblib-2.4.3-x86-linux.tar
+__pycache__/
+.DS_Store
