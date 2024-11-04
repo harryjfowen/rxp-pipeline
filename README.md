@@ -11,9 +11,9 @@ A Python tool for processing and analyzing LiDAR point cloud data. Forked from [
 Download the rivlib-2_5_10-x86_64-linux-gcc9.zip (make sure to get the gcc9 version) and the the rdblib-2.4.0-x86_64-linux.tar.gz from the memebers area of the RIEGL website.
 Place the zipped folder into this directory alongside the install_pdal.sh script. 
 
-'''
+```bash
 bash install_pdal.sh
-'''
+```
 
 ## Added Features
 
