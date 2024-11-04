@@ -2,7 +2,7 @@
 
 # LiDAR Point Cloud Processing Tool
 
-A Python tool for processing and analyzing LiDAR point cloud data. Forked from [original repository URL], with additional features for enhanced point cloud processing.
+A Python tool for processing and analyzing LiDAR point cloud data. Forked from [https://github.com/philwilkes/rxp-pipeline], with additional features for enhanced point cloud processing.
 
 ![Height normalised TLS point cloud with ground points in black](images/plot.png)
 
