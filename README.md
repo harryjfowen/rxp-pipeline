@@ -9,7 +9,7 @@ Download the rivlib-2_5_10-x86_64-linux-gcc9.zip (make sure to get the gcc9 vers
 Place the zipped folder into this directory alongside the install_pdal.sh script. 
 
 '''
-bash install_pdal.sh'
+bash install_pdal.sh
 '''
 
 ## Added Features
