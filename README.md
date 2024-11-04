@@ -4,6 +4,9 @@
 
 A Python tool for processing and analyzing LiDAR point cloud data. Forked from [original repository URL], with additional features for enhanced point cloud processing.
 
+![Height normalised TLS point cloud with ground points in black](images/plot.png)
+
+
 # Compile PDAL with python bindings and rxp support 
 Download the rivlib-2_5_10-x86_64-linux-gcc9.zip (make sure to get the gcc9 version) and the the rdblib-2.4.0-x86_64-linux.tar.gz from the memebers area of the RIEGL website.
 Place the zipped folder into this directory alongside the install_pdal.sh script. 
