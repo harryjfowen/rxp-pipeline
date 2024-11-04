@@ -38,7 +38,6 @@ See `python convert.py --help` for all available options.
 - NumPy
 - Pandas
 - SciPy
-- PLY-IO
 
 ## Credits
 
