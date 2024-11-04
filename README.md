@@ -1,4 +1,4 @@
-# Credit to @PhilWilkes for the original version of this code.
+### Credit to @PhilWilkes for the original version of this code.
 
 # LiDAR Point Cloud Processing Tool
 
