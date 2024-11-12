@@ -34,11 +34,6 @@ fi
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
-# Download and extract PDAL source
-print_status "Downloading PDAL source..."
-wget "https://github.com/PDAL/PDAL/releases/download/$PDAL_VERSION/PDAL-$PDAL_VERSION-src.tar.bz2"
-tar -xf "PDAL-$PDAL_VERSION-src.tar.bz2"
-
 # Check for RIEGL libraries in the Downloads folder and move them to the work directory
 if [ -f "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ] && [ -f "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" ]; then
     mv "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" "$WORK_DIR/"
@@ -52,6 +47,11 @@ if [ ! -f "$WORK_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ]
     echo "2. rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz"
     exit 1
 fi
+
+# Download and extract PDAL source
+print_status "Downloading PDAL source..."
+wget "https://github.com/PDAL/PDAL/releases/download/$PDAL_VERSION/PDAL-$PDAL_VERSION-src.tar.bz2"
+tar -xf "PDAL-$PDAL_VERSION-src.tar.bz2"
 
 # Create conda environment
 print_status "Creating conda environment..."
