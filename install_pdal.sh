@@ -30,15 +30,6 @@ if ! command_exists wget; then
     exit 1
 fi
 
-# Create conda environment
-print_status "Creating conda environment..."
-conda create -n $CONDA_ENV_NAME -c conda-forge -y gdal ninja cmake cxx-compiler laszip pdal python-pdal pandas geopandas
-
-# Activate conda environment
-print_status "Activating conda environment..."
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate $CONDA_ENV_NAME
-
 # Create working directory
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
@@ -61,6 +52,15 @@ if [ ! -f "$WORK_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ]
     echo "2. rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz"
     exit 1
 fi
+
+# Create conda environment
+print_status "Creating conda environment..."
+conda create -n $CONDA_ENV_NAME -c conda-forge -y gdal ninja cmake cxx-compiler laszip pdal python-pdal pandas geopandas
+
+# Activate conda environment
+print_status "Activating conda environment..."
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate $CONDA_ENV_NAME
 
 # Extract RIEGL libraries
 print_status "Extracting RIEGL libraries..."
