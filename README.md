@@ -1,8 +1,8 @@
-# Credit to @PhilWilkes for the original version of this code.
+### Credit to @PhilWilkes for the original version of this code.
 
 # LiDAR Point Cloud Processing Tool
 
-A Python tool for processing and analyzing LiDAR point cloud data. Forked from [original repository URL], with additional features for enhanced point cloud processing.
+A Python tool for processing and analyzing LiDAR point cloud data. Forked from [https://github.com/philwilkes/rxp-pipeline], with additional features for enhanced point cloud processing.
 
 ![Height normalised TLS point cloud with ground points in black](images/plot.png)
 
@@ -11,9 +11,9 @@ A Python tool for processing and analyzing LiDAR point cloud data. Forked from [
 Download the rivlib-2_5_10-x86_64-linux-gcc9.zip (make sure to get the gcc9 version) and the the rdblib-2.4.0-x86_64-linux.tar.gz from the memebers area of the RIEGL website.
 Place the zipped folder into this directory alongside the install_pdal.sh script. 
 
-'''
+```bash
 bash install_pdal.sh
-'''
+```
 
 ## Added Features
 
@@ -38,7 +38,6 @@ See `python convert.py --help` for all available options.
 - NumPy
 - Pandas
 - SciPy
-- PLY-IO
 
 ## Credits
 
