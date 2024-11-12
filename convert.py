@@ -25,32 +25,17 @@ class PointCloudDownsampler:
         self.vlength = vlength
 
     def voxelisation_by_reflectance(self) -> np.ndarray:
-        """
-        Downsample keeping point with highest reflectance in each voxel
-        
-        Returns:
-            Array of indices for selected points
-        """
         voxel_indices = np.floor(self.pc[:, :3] / self.vlength).astype(int)
-        voxel_dict = defaultdict(list)
-        
-        for i, voxel_index in enumerate(voxel_indices):
-            voxel_dict[tuple(voxel_index)].append(i)
-            
-        selected_indices = [
-            voxel_points_indices[np.argmax(self.pc[voxel_points_indices, 3])]
-            for voxel_points_indices in voxel_dict.values()
-        ]
-        
+        structured_array = np.core.records.fromarrays(
+            voxel_indices.T.tolist() + [self.pc[:, 3]],
+            names='x, y, z, reflectance'
+        )
+        sorted_array = np.sort(structured_array, order=['x', 'y', 'z', 'reflectance'])
+        _, first_occurrences = np.unique(sorted_array[['x', 'y', 'z']], return_index=True)
+        selected_indices = first_occurrences
         return self.indices[selected_indices]
 
     def random_voxelisation(self) -> np.ndarray:
-        """
-        Downsample keeping random point in each voxel
-        
-        Returns:
-            Array of indices for selected points
-        """
         voxel_indices = np.floor(self.pc[:, :3] / self.vlength).astype(int)
         voxel_dict = defaultdict(list)
         
@@ -365,12 +350,11 @@ class PointCloudProcessor:
     def _compile_plot(self):
         """Compile PLY files and optionally classify ground"""
         plot_code = self.args.plot_code.replace('_', '')
-        outfile = os.path.join(self.args.odir, f'{plot_code}.ply') # Remove old files
+        outfile = os.path.join(self.args.odir, f'{plot_code}.ply')
 
         file_pattern = os.path.join(self.args.odir, f'*{plot_code}*.ply')
         ply_files = sorted([file for file in glob.glob(file_pattern) if re.search(r'_\d+\.ply$', os.path.basename(file))])
-        print(ply_files)
-        exit()
+
         if ply_files:
             combined = pd.concat([plyio.read_ply(f) for f in ply_files])
             plyio.write_ply(outfile, combined)
@@ -389,6 +373,16 @@ class PointCloudProcessor:
         """Remove duplicates from tile index"""
         index_path = os.path.join(self.args.odir, 'tindex.dat')
         pd.read_csv(index_path).drop_duplicates().to_csv(index_path, index=False)
+    
+    def remove_existing_files(self, directory):
+        file_patterns = [os.path.join(directory, '*.ply'), os.path.join(directory, '*.xyz')]
+        total_removed = 0
+        for file_pattern in file_patterns:
+            files = glob.glob(file_pattern)
+            for file in files:
+                os.remove(file)
+            total_removed += len(files)
+        print(f"Removed {total_removed} existing .ply and .xyz files from {directory}")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -399,7 +393,7 @@ def main():
     parser.add_argument('--deviation', type=float, default=15, help='deviation filter')
     parser.add_argument('--reflectance', type=float, nargs=2, default=[-999, 999], help='reflectance filter')
     parser.add_argument('--res', type=float, default=0.01, help='voxel resolution to downsample cloud')
-    parser.add_argument('--tile', type=float, default=5, help='length of tile')
+    parser.add_argument('--tile', type=int, default=5, help='length of tile')
     parser.add_argument('--plot', action="store_true", help='export as single plot file')
     parser.add_argument('--bbox', type=int, nargs=4, default=[], help='bounding box format xmin xmax ymin ymax')
     parser.add_argument('--num-prcs', type=int, default=default_procs, help='number of cores to use')
@@ -418,6 +412,7 @@ def main():
     parser.add_argument('--print-bbox-only', action='store_true', help='print bbox only')
     
     processor = PointCloudProcessor(parser.parse_args())
+    processor.remove_existing_files(processor.args.odir)
     processor.process()
 
 if __name__ == '__main__':
