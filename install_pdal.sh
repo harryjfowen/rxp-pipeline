@@ -3,8 +3,8 @@
 # Configuration variables
 PDAL_VERSION="2.5.5"
 CONDA_ENV_NAME="pdal"
-RIVLIB_VERSION="2_5_10"
-RDBLIB_VERSION="2.4.0"
+RIVLIB_VERSION="2_8_0"
+RDBLIB_VERSION="2.4.5"
 GCC_VERSION="gcc9"
 WORK_DIR="$HOME/pdal_build"
 DOWNLOADS_DIR="$HOME/Downloads"
@@ -34,10 +34,15 @@ fi
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
+# Download and extract PDAL source
+print_status "Downloading PDAL source..."
+wget "https://github.com/PDAL/PDAL/releases/download/$PDAL_VERSION/PDAL-$PDAL_VERSION-src.tar.bz2"
+tar -xf "PDAL-$PDAL_VERSION-src.tar.bz2"
+
 # Check for RIEGL libraries in the Downloads folder and move them to the work directory
 if [ -f "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ] && [ -f "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" ]; then
-    mv "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" "$WORK_DIR/"
-    mv "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" "$WORK_DIR/"
+    cp "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" "$WORK_DIR/"
+    cp  "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" "$WORK_DIR/"
 fi
 
 # Check for RIEGL libraries in the work directory
@@ -47,11 +52,6 @@ if [ ! -f "$WORK_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ]
     echo "2. rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz"
     exit 1
 fi
-
-# Download and extract PDAL source
-print_status "Downloading PDAL source..."
-wget "https://github.com/PDAL/PDAL/releases/download/$PDAL_VERSION/PDAL-$PDAL_VERSION-src.tar.bz2"
-tar -xf "PDAL-$PDAL_VERSION-src.tar.bz2"
 
 # Create conda environment
 print_status "Creating conda environment..."
@@ -74,14 +74,25 @@ export rdb_DIR="$WORK_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux/interface/cpp"
 # Modify PDAL cmake files
 print_status "Configuring PDAL build..."
 cd "PDAL-$PDAL_VERSION-src"
-sed -i 's/"Choose if RiVLib support should be built" OFF)/"Choose if RiVLib support should be built" ON)/g' cmake/options.cmake
-sed -i 's/"Choose if rdblib support should be built" OFF)/"Choose if rdblib support should be built" ON)/g' cmake/options.cmake
+sed -i 's/"Choose if RiVLib support should be built" FALSE)/"Choose if RiVLib support should be built" True)/g' cmake/options.cmake
+sed -i 's/"Choose if rdblib support should be built" FALSE)/"Choose if rdblib support should be built" True)/g' cmake/options.cmake
 sed -i 's/const bool DEFAULT_SYNC_TO_PPS = true;/const bool DEFAULT_SYNC_TO_PPS = false;/g' plugins/rxp/io/RxpReader.hpp
 
 # Build PDAL
 print_status "Building PDAL..."
 mkdir -p build
 cd build
+
+#Fix PDAL bug 
+echo "Please open the XMLSchema.cpp file and check the following line:"
+echo "void SchemaParserStructuredErrorHandler(void* /*userData*/, xmlErrorPtr error)"
+echo "If the 'const' qualifier is missing from 'xmlErrorPtr error', please add it."
+echo "Should look like '(void * /*userData*/, const xmlErrorPtr error)'."
+echo "Once done, press Enter to continue with the build process."
+read -p "Press Enter when you have made the change..."
+echo "Proceeding with cmake..."
+
+#Continue building PDAL
 cmake -G Ninja ..
 ninja
 
