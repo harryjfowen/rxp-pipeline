@@ -6,6 +6,8 @@ CONDA_ENV_NAME="pdal"
 RIVLIB_VERSION="2_5_10"
 RDBLIB_VERSION="2.4.0"
 GCC_VERSION="gcc9"
+WORK_DIR="$HOME/pdal_build"
+DOWNLOADS_DIR="$HOME/Downloads"
 
 # Function to check if command exists
 command_exists() {
@@ -38,7 +40,6 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate $CONDA_ENV_NAME
 
 # Create working directory
-WORK_DIR="$HOME/pdal_build"
 mkdir -p "$WORK_DIR"
 cd "$WORK_DIR"
 
@@ -47,9 +48,15 @@ print_status "Downloading PDAL source..."
 wget "https://github.com/PDAL/PDAL/releases/download/$PDAL_VERSION/PDAL-$PDAL_VERSION-src.tar.bz2"
 tar -xf "PDAL-$PDAL_VERSION-src.tar.bz2"
 
-# Check for RIEGL libraries
-if [ ! -f "rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ] || [ ! -f "rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" ]; then
-    echo "Please download the following files from RIEGL member area and place them in $WORK_DIR:"
+# Check for RIEGL libraries in the Downloads folder and move them to the work directory
+if [ -f "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ] && [ -f "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" ]; then
+    mv "$DOWNLOADS_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" "$WORK_DIR/"
+    mv "$DOWNLOADS_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" "$WORK_DIR/"
+fi
+
+# Check for RIEGL libraries in the work directory
+if [ ! -f "$WORK_DIR/rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip" ] || [ ! -f "$WORK_DIR/rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz" ]; then
+    echo "Please download the following files from RIEGL member area and place them in $WORK_DIR or $DOWNLOADS_DIR:"
     echo "1. rivlib-${RIVLIB_VERSION}-x86_64-linux-${GCC_VERSION}.zip"
     echo "2. rdblib-${RDBLIB_VERSION}-x86_64-linux.tar.gz"
     exit 1

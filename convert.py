@@ -7,6 +7,7 @@ from pathlib import Path
 from collections import defaultdict
 from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
+import re
 
 class PointCloudDownsampler:
     """Handles point cloud downsampling operations"""
@@ -188,7 +189,7 @@ class PointCloudProcessor:
         
         if len(ground_points) > 0:
             ground_file = f"{base_name}_ground.ply"
-            ply_io.write_ply(ground_file, ground_points)
+            plyio.write_ply(ground_file, ground_points)
             if self.args.verbose:
                 print(f"Saved ground points to: {ground_file}")
         
@@ -199,7 +200,7 @@ class PointCloudProcessor:
         
         if len(non_ground_points) > 0:
             non_ground_file = f"{base_name}.ply"
-            ply_io.write_ply(non_ground_file, non_ground_points)
+            plyio.write_ply(non_ground_file, non_ground_points)
             if self.args.verbose:
                 print(f"Saved normalized non-ground points to: {non_ground_file}")
             
@@ -240,6 +241,8 @@ class PointCloudProcessor:
                     "filename": rxp, 
                     "sync_to_pps": "false", 
                     "reflectance_as_intensity": "false"},
+                    # "min_reflectance": f"{self.args.reflectance[0]}",
+                    # "max_reflectance": f"{self.args.reflectance[1]}"},
                     {"type": "filters.range", 
                     "limits": f"Deviation[0:{self.args.deviation}]"},
                     {"type": "filters.range", 
@@ -251,8 +254,7 @@ class PointCloudProcessor:
                     {"type": "filters.splitter",
                     "length": f"{self.args.tile}",
                     "origin_x": f"{math.floor((self.args.bbox[0] - self.args.buffer) / self.args.tile) * self.args.tile}",
-                    "origin_y": f"{math.floor((self.args.bbox[2] - self.args.buffer) / self.args.tile) * self.args.tile}"}
-                ]))
+                    "origin_y": f"{math.floor((self.args.bbox[2] - self.args.buffer) / self.args.tile) * self.args.tile}"}]))
                 
                 pipeline.execute()
                 
@@ -357,21 +359,21 @@ class PointCloudProcessor:
         
         data.columns = ['x', 'y', 'z', 'reflectance']
         ply_path = xyz_path.replace('.xyz', '.ply')
-        ply_io.write_ply(ply_path, data)
+        plyio.write_ply(ply_path, data)
         os.unlink(xyz_path)
 
     def _compile_plot(self):
         """Compile PLY files and optionally classify ground"""
         plot_code = self.args.plot_code.replace('_', '')
-        outfile = os.path.join(self.args.odir, f'{plot_code}.ply')
-        
-        if os.path.exists(outfile):
-            os.remove(outfile)
-            
-        ply_files = sorted(glob.glob(os.path.join(self.args.odir, f'*{plot_code}*.ply')))
+        outfile = os.path.join(self.args.odir, f'{plot_code}.ply') # Remove old files
+
+        file_pattern = os.path.join(self.args.odir, f'*{plot_code}*.ply')
+        ply_files = sorted([file for file in glob.glob(file_pattern) if re.search(r'_\d+\.ply$', os.path.basename(file))])
+        print(ply_files)
+        exit()
         if ply_files:
-            combined = pd.concat([ply_io.read_ply(f) for f in ply_files])
-            ply_io.write_ply(outfile, combined)
+            combined = pd.concat([plyio.read_ply(f) for f in ply_files])
+            plyio.write_ply(outfile, combined)
 
             for f in ply_files:
                 os.unlink(f)
