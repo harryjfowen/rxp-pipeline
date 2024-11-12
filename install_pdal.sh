@@ -84,10 +84,8 @@ mkdir -p build
 cd build
 
 #Fix PDAL bug 
-echo "Please open the XMLSchema.cpp file and check the following line:"
-echo "void SchemaParserStructuredErrorHandler(void* /*userData*/, xmlErrorPtr error)"
-echo "If the 'const' qualifier is missing from 'xmlErrorPtr error', please add it."
-echo "Should look like '(void * /*userData*/, const xmlErrorPtr error)'."
+echo "Please open the XMLSchema.cpp and XMLSchema.hpp file and do the following:"
+echo "Change any 'xmlErrorPtr error' to 'xmlError const*error'
 echo "Once done, press Enter to continue with the build process."
 read -p "Press Enter when you have made the change..."
 echo "Proceeding with cmake..."
