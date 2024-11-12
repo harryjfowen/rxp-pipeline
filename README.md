@@ -26,7 +26,7 @@ bash install_pdal.sh
 ## Usage
 
 ```bash
-python convert.py --project /path/to/project --plot --classify-ground
+python3 convert.py --project ~/Desktop/SPA19_2021-09-29.PROJ/ --plot-code SPA19 --deviation 15 --reflectance -20 0  --tile 2.5 --res 0.01 --buffer 2.5 --plot --classify-ground --verbose
 ```
 
 See `python convert.py --help` for all available options.
