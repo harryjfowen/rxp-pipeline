@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration variables
-PDAL_VERSION="2.5.5"
+PDAL_VERSION="2.8.1"
 CONDA_ENV_NAME="pdal"
 RIVLIB_VERSION="2_8_0"
 RDBLIB_VERSION="2.4.5"
