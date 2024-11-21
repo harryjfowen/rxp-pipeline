@@ -83,13 +83,6 @@ print_status "Building PDAL..."
 mkdir -p build
 cd build
 
-#Fix PDAL bug 
-echo "Please open the XMLSchema.cpp and XMLSchema.hpp file and do the following:"
-echo "Change any 'xmlErrorPtr error' to 'xmlError const*error'
-echo "Once done, press Enter to continue with the build process."
-read -p "Press Enter when you have made the change..."
-echo "Proceeding with cmake..."
-
 #Continue building PDAL
 cmake -G Ninja ..
 ninja
