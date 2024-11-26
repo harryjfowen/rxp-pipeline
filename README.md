@@ -19,7 +19,7 @@ bash install_pdal.sh
 ## Added Features
 
 - Ground classification using Cloth Simulation Filter (CSF)
-- Intelligent cropping using scan position convex hull
+- Precise cropping using scan position convex hull
 - Full plot output capabilities
 - Point cloud downsampling procedures
 - Global matrix transformation to GNSS coordinate system
@@ -27,7 +27,7 @@ bash install_pdal.sh
 ## Usage
 
 ```bash
-python3 convert.py --project ~/Desktop/SPA19_2021-09-29.PROJ/ --plot-code SPA19 --deviation 15 --reflectance -20 0  --tile 2.5 --res 0.01 --buffer 2.5 --plot --classify-ground --verbose
+python3 convert.py --project ~/Desktop/SPA19_2021-09-29.PROJ/ --plot-code SPA19 --deviation 15 --reflectance -20 0  --tile 5 --res 0.01 --buffer 1.0 --plot --classify-ground --verbose
 ```
 
 See `python convert.py --help` for all available options.
